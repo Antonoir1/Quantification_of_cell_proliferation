@@ -1,4 +1,3 @@
-# This Python file uses the following encoding: utf-8
 import sys
 import os
 from PySide2.QtWidgets import QApplication, QMainWindow
@@ -164,8 +163,9 @@ class Window(QtWidgets.QWidget):
         layoutimg = QtWidgets.QHBoxLayout()
         layoutimg.setContentsMargins(0,0,0,0)
         layoutimg.setSpacing(0)
-        self.output_imgs = PopulationImage(self, width=5, height=4, dpi=100)
+        self.output_imgs = PopulationImage(self, width=5, height=4, dpi=115)
         self.output_imgs.setMinimumHeight(300)
+        self.output_imgs.setMinimumWidth(300)
         self.labelimg = QtWidgets.QLabel("Population image:")
         self.labelimg.setAlignment(QtCore.Qt.AlignBottom)
         self.labelimg.setFont(font)
@@ -174,9 +174,13 @@ class Window(QtWidgets.QWidget):
         font.setPointSize(12)
         nextbutton = QtWidgets.QPushButton("Next")
         nextbutton.setFont(font)
+        nextbutton.setFixedHeight(300)
+        nextbutton.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding) #Expanding
         nextbutton.clicked.connect(self.Next)
         backbutton = QtWidgets.QPushButton("Back")
         backbutton.setFont(font)
+        backbutton.setFixedHeight(300)
+        backbutton.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding) #Expanding
         backbutton.clicked.connect(self.Back)
         layoutimg.addWidget(backbutton)
         layoutimg.addWidget(self.output_imgs)
@@ -218,12 +222,14 @@ class Window(QtWidgets.QWidget):
             if(self.position < (len(self.result)-1)):
                 self.position += 1
                 self.output_imgs.update_figure(self.path+"/"+self.result[self.position])
+                self.labelimg.setText("Population image: "+str(self.position)+"/"+str(len(self.result)))
 
     #GO BACK TO THE LAST IMAGE
     def Back(self):
         if(self.position > 0):
                 self.position -= 1
                 self.output_imgs.update_figure(self.path+"/"+self.result[self.position])
+                self.labelimg.setText("Population image: "+str(self.position)+"/"+str(len(self.result)))
 
     #CHECK THE PATHS OF THE INPUT/PREFIX FIELD AND LAUNCH THE PROCESS OF COUNTING
     def Process(self):
@@ -239,22 +245,19 @@ class Window(QtWidgets.QWidget):
                 msg.exec()
             else:
                 have_images = False
-                have_prefix = True
                 imgs = []
                 for i in range(0,len(files)):
                     if(len(files[i]) > 4 ):
                         if(files[i][len(files[i])-3:len(files[i])] == "tif"):
-                            have_images = True
-                            imgs.append(files[i])
-                            if(str(self.inputpref.text()) not in files[i]):
-                                have_prefix = False
+                            if(len(str(self.inputpref.text()))+4 < len(files[i]) and str(self.inputpref.text()) in files[i] and str.isdecimal(files[i][len(str(self.inputpref.text())):len(files[i])-4]) == True):
+                                have_images = True
+                                imgs.append(files[i])
                     if(len(files[i]) > 5):
                         if(files[i][len(files[i])-4:len(files[i])] == "tiff"):
-                            have_images = True
-                            imgs.append(files[i])
-                            if(str(self.inputpref.text()) not in files[i]):
-                                have_prefix = False
-                if(have_images == False or have_prefix == False):
+                            if(len(str(self.inputpref.text()))+5 < len(files[i]) and str(self.inputpref.text()) in files[i] and str.isdecimal(files[i][len(str(self.inputpref.text())):len(files[i])-5]) == True):
+                                have_images = True
+                                imgs.append(files[i])
+                if(have_images == False):
                     msg = QtWidgets.QMessageBox()
                     msg.setText( u"ERROR:\nNo image .tif/.tiff found in the input folder and/or the prefix value is uncorrect" )
                     msg.exec()
@@ -264,7 +267,6 @@ class Window(QtWidgets.QWidget):
                     w = 0
                     for i in imgs:
                         if(".tiff" in i):
-                            #TODO TRY EXCEPT
                             unordered.append(int(i[len(str(self.inputpref.text())):len(i)-5]))
                             ordering.append([int(i[len(str(self.inputpref.text())):len(i)-5]), i])
                         else:
@@ -276,8 +278,7 @@ class Window(QtWidgets.QWidget):
                     self.imgs = []
                     for i in range(0,len(unordered)):
                         k = 0
-                        #TODO RAJOUTER UNE SECURITE
-                        while(unordered[i] != ordering[k][0]):
+                        while(unordered[i] != ordering[k][0] and k < len(ordering)):
                             k += 1
                         self.imgs.append(ordering[k][1])
                     work = 0
@@ -299,6 +300,7 @@ class Window(QtWidgets.QWidget):
                     self.position = 0
                     self.path = self.ind.get_path()
                     self.prefix = str(self.inputpref.text())
+                    self.labelimg.setText("Population image: 0/"+str(len(self.result)))
                         
 
 
