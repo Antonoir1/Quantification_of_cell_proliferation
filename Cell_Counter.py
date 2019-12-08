@@ -17,26 +17,30 @@ class InputData(QtWidgets.QWidget):
 
         font = QtGui.QFont()
         font.setPointSize(10)
-        open = QtWidgets.QPushButton("Browse")
-        open.setFont(font)
-        open.setFixedSize(80,35)
+        opening = QtWidgets.QPushButton("Browse")
+        opening.setObjectName("browse")
+        opening.setFont(font)
+        opening.setFixedSize(80,40)
         label2 = QtWidgets.QLabel("Path:")
+        label2.setObjectName("path")
         font.setPointSize(14)
         label2.setFont(font)
         label2.setFixedWidth(60)
         font.setPointSize(10)
         self.label3 = QtWidgets.QLineEdit()
+        self.label3.setObjectName("path_input")
         self.label3.setFont(font)
         self.label3.setMinimumWidth(300)
+        self.label3.setFixedHeight(35)
 
-        open.clicked.connect(self.open_new_dialog)
+        opening.clicked.connect(self.open_new_dialog)
 
         layout = QtWidgets.QHBoxLayout()
         layout.setContentsMargins(0,0,0,0)
         layout.setAlignment(QtCore.Qt.AlignTop)
         layout.addWidget(label2)
         layout.addWidget(self.label3)
-        layout.addWidget(open)
+        layout.addWidget(opening)
         self.setLayout(layout)
 
     #OPEN THE FILE EXPLORER AND MODIFY THE VALUE OF THE INPUT PATH FIELD
@@ -88,6 +92,7 @@ class Window(QtWidgets.QWidget):
 
         #TITLE
         Title = QtWidgets.QLabel("Cell Counter")
+        Title.setObjectName("title")
         Title.setAlignment(QtCore.Qt.AlignTop)
         font = QtGui.QFont()
         font.setPointSize(28)
@@ -98,22 +103,28 @@ class Window(QtWidgets.QWidget):
         #PROGRESS BUTTON
         font.setPointSize(16)
         process = QtWidgets.QPushButton("Process Data")
+        process.setObjectName("process")
+        process.setFixedHeight(50)
         process.setFont(font)
         process.clicked.connect(self.Process)
 
         #PROGRESS BAR
         self.progress = QtWidgets.QProgressBar(self)
+        self.progress.setObjectName("progress")
         self.progress.setMinimumHeight(40)
 
         #QUIT BUTTON
-        quit = QtWidgets.QPushButton("Quit")
-        quit.setFont(font)
-        self.connect(quit, QtCore.SIGNAL("clicked()"),
+        quitting = QtWidgets.QPushButton("QUIT")
+        quitting.setFont(font)
+        quitting.setObjectName("quit")
+        quitting.setFixedHeight(50)
+        self.connect(quitting, QtCore.SIGNAL("clicked()"),
                              QtWidgets.qApp, QtCore.SLOT("quit()"))
 
         #LAYOUTS (GLOBAL LAYOUT, INPUT LAYOUT, OUTPUT LAYOUT)
         self.layout = QtWidgets.QVBoxLayout()
         self.layout.setContentsMargins(15,0,15,15)
+        self.layout.setSpacing(15)
         layoutin = QtWidgets.QVBoxLayout()
         layoutin.setContentsMargins(0,0,0,0)
         layoutin.setSpacing(0)
@@ -124,6 +135,7 @@ class Window(QtWidgets.QWidget):
         #INPUT WIDGETS
         self.ind = InputData()
         labelin = QtWidgets.QLabel("Input Folder:")
+        labelin.setObjectName("input")
         labelin.setAlignment(QtCore.Qt.AlignBottom)
         labelin.setFont(font)
         labelin.setMinimumWidth(175)
@@ -132,22 +144,26 @@ class Window(QtWidgets.QWidget):
 
         #INPUT FORMAT
         labelpref = QtWidgets.QLabel("Images Prefix (ex: time => time01.tiff, time02.tiff...):")
+        labelpref.setObjectName("prefix")
         labelpref.setAlignment(QtCore.Qt.AlignBottom)
         font.setPointSize(12)
         labelpref.setFont(font)
         self.inputpref = QtWidgets.QLineEdit()
+        self.inputpref.setObjectName("prefix_input")
         self.inputpref.setFont(font)
         self.inputpref.setMinimumWidth(300)
+        self.inputpref.setFixedHeight(35)
         font.setPointSize(16)
 
         #GRAPH WIDGETS
         labelgraph = QtWidgets.QLabel("Cell population:")
+        labelgraph.setObjectName("population")
         labelgraph.setAlignment(QtCore.Qt.AlignBottom)
         labelgraph.setFont(font)
         labelgraph.setMinimumWidth(175)
         labelgraph.setMaximumWidth(200)
         labelgraph.setContentsMargins(0,50,0,15)
-        self.Graph = PopulationCanvas(self, width=5, height=4, dpi=100)
+        self.Graph = PopulationCanvas(self, width=5, height=4, dpi=115)
         self.Graph.setMinimumHeight(300)
 
         #GLOBAL VARIABLES FOR PROCESSING IMAGES
@@ -167,20 +183,21 @@ class Window(QtWidgets.QWidget):
         self.output_imgs.setMinimumHeight(300)
         self.output_imgs.setMinimumWidth(300)
         self.labelimg = QtWidgets.QLabel("Population image:")
+        self.labelimg.setObjectName("population_img")
         self.labelimg.setAlignment(QtCore.Qt.AlignBottom)
         self.labelimg.setFont(font)
         self.labelimg.setMinimumWidth(175)
         self.labelimg.setContentsMargins(0,50,0,15)
-        font.setPointSize(12)
-        nextbutton = QtWidgets.QPushButton("Next")
+        font.setPointSize(18)
+        nextbutton = QtWidgets.QPushButton(">")
+        nextbutton.setObjectName("next")
         nextbutton.setFont(font)
-        nextbutton.setFixedHeight(300)
-        nextbutton.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding) #Expanding
+        nextbutton.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Expanding)
         nextbutton.clicked.connect(self.Next)
-        backbutton = QtWidgets.QPushButton("Back")
+        backbutton = QtWidgets.QPushButton("<")
+        backbutton.setObjectName("back")
         backbutton.setFont(font)
-        backbutton.setFixedHeight(300)
-        backbutton.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding) #Expanding
+        backbutton.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Expanding)
         backbutton.clicked.connect(self.Back)
         layoutimg.addWidget(backbutton)
         layoutimg.addWidget(self.output_imgs)
@@ -199,11 +216,12 @@ class Window(QtWidgets.QWidget):
         self.layout.addWidget(self.Graph)
         self.layout.addWidget(self.labelimg)
         self.layout.addLayout(layoutimg)
-        self.layout.addWidget(quit)
+        self.layout.addWidget(quitting)
 
         #SCROLLING BAR WIDGETS
         Container = QtWidgets.QWidget()
         Container.setLayout(self.layout)
+        Container.setObjectName("body")
         Scroll = QtWidgets.QScrollArea()
         Scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
         Scroll.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
@@ -213,6 +231,7 @@ class Window(QtWidgets.QWidget):
 
         #SCROLLING BAR LAYOUT
         vlayout = QtWidgets.QVBoxLayout(self)
+        vlayout.setContentsMargins(0,0,0,0)
         vlayout.addWidget(Scroll)
         self.setLayout(vlayout)
 
@@ -250,13 +269,15 @@ class Window(QtWidgets.QWidget):
                     if(len(files[i]) > 4 ):
                         if(files[i][len(files[i])-3:len(files[i])] == "tif"):
                             if(len(str(self.inputpref.text()))+4 < len(files[i]) and str(self.inputpref.text()) in files[i] and str.isdecimal(files[i][len(str(self.inputpref.text())):len(files[i])-4]) == True):
-                                have_images = True
-                                imgs.append(files[i])
+                                if(int(files[i][len(str(self.inputpref.text())):len(files[i])-4]) >= 0):
+                                    have_images = True
+                                    imgs.append(files[i])
                     if(len(files[i]) > 5):
                         if(files[i][len(files[i])-4:len(files[i])] == "tiff"):
                             if(len(str(self.inputpref.text()))+5 < len(files[i]) and str(self.inputpref.text()) in files[i] and str.isdecimal(files[i][len(str(self.inputpref.text())):len(files[i])-5]) == True):
-                                have_images = True
-                                imgs.append(files[i])
+                                if(int(files[i][len(str(self.inputpref.text())):len(files[i])-5]) >= 0):
+                                    have_images = True
+                                    imgs.append(files[i])
                 if(have_images == False):
                     msg = QtWidgets.QMessageBox()
                     msg.setText( u"ERROR:\nNo image .tif/.tiff found in the input folder and/or the prefix value is uncorrect" )
@@ -307,6 +328,9 @@ class Window(QtWidgets.QWidget):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    css = open("./style.txt","r")
+    css = css.read()
+    app.setStyleSheet(css)
     window = Window()
     window.show()
     sys.exit(app.exec_())

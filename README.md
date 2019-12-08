@@ -1,5 +1,9 @@
 # Quantification of cell proliferation (WARNING: WORK IN PROGRESS)
 
+## Description:
+
+The goal of this project was to make a tool for the researchers (in the cancer cell proliferation) to use. This tool will count the cell population in a given image (.tif or .tiff), and will even track the cell flows over time, if these images are given with a time order and a prefix (ex: Time => Time00, Time01, Time02...). Warning: the time order must be superior or equal to 0.
+
 ## Prerequisites
 
 <ul>
@@ -16,7 +20,7 @@
 
 ## Run
 
-To run this project you can either execute the CellCounter.exe or enter this command:
+To run this project you can enter this command:
 ```bash
-$ python "Cell Counter.py"
+$ python Cell_Counter.py
 ```

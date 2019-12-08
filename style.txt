@@ -1,0 +1,122 @@
+QWidget#body {
+    background-color: #222222;
+}
+QLabel#title {
+    color: #ececec;
+}
+QLabel#input {
+    color: #ececec;
+}
+QLabel#path {
+    color: #ececec;
+}
+QLabel#prefix {
+    color: #ececec;
+}
+QLabel#population {
+    color: #ececec;
+}
+QLabel#population_img {
+    color: #ececec;
+}
+
+QProgressBar#progress {
+    color: #ececec;
+}
+
+QLineEdit#path_input {
+    background-color: #4e4e4e;
+    color: #cfcfcf;
+    border-width: 0px;
+}
+QLineEdit#path_input:focus {
+    background-color: #636363;
+    color: #ececec;
+}
+QLineEdit#prefix_input {
+    background-color: #4e4e4e;
+    color: #cfcfcf;
+    border-width: 0px;
+}
+QLineEdit#prefix_input:focus {
+    background-color: #636363;
+    color: #ececec;
+}
+
+QPushButton#browse {
+    background-color: #0078e9;
+    color: #ececec;
+    border-style: solid;
+    border-width: 2px;
+    border-color: #0078e9;
+    border-radius: 4px;
+}
+QPushButton#browse:hover {
+    background-color: #222222;
+}
+QPushButton#browse:pressed {
+    border-color: #0084ff;
+    color: white;
+}
+QPushButton#next {
+    background-color: #424242;
+    color: #ececec;
+    border-width: 2px;
+    border-style: solid;
+    border-color: #424242;
+    padding: 20%;
+}
+QPushButton#next:hover {
+    background-color: #616161;
+    border-color: #616161;
+    color: white;
+}
+QPushButton#next:pressed {
+    background-color: #707070;
+    border-color: #707070;
+}
+QPushButton#back {
+    background-color: #424242;
+    color: #ececec;
+    border-width: 2px;
+    border-style: solid;
+    border-color: #424242;
+    padding: 20%;
+}
+QPushButton#back:hover {
+    background-color: #616161;
+    color: white;
+    border-color: #616161;
+}
+QPushButton#back:pressed {
+    background-color: #707070;
+    border-color: #707070;
+}
+QPushButton#process {
+    background-color: #009900;
+    color: #ececec;
+    border-style: solid;
+    border-radius: 4px;
+}
+QPushButton#process:hover {
+    background-color: #00ca00;
+    color: white;
+}
+QPushButton#process:pressed {
+    background-color:#00e600;
+}
+QPushButton#quit {
+    background-color: #222222;
+    color: #ececec;
+    border-width: 2px;
+    border-style: solid;
+    border-color: red;
+    border-radius: 4px;
+}
+QPushButton#quit:hover {
+    background-color: red;
+}
+QPushButton#quit:pressed {
+    background-color: #c90000;
+    border-color: #c90000;
+}
