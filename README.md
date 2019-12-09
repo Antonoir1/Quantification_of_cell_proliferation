@@ -15,7 +15,9 @@ The goal of this project was to make a tool for the researchers (in the cancer c
 <ul>
 <li>python 3 (https://www.python.org/)</li>
 <li>PySide2</li>
-<li>hashlib (https://pypi.org/project/hashlib/)</li>
+<li>numpy (https://pypi.org/project/numpy/)</li>
+<li>Tensorflow</li>
+<li>Keras</li>
 </ul>
 
 ## Run
