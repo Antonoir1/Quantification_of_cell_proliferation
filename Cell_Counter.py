@@ -246,18 +246,26 @@ class PopulationImages(QtWidgets.QGraphicsView):
         self._photo = QtWidgets.QGraphicsPixmapItem()
         self._scene.addItem(self._photo)
         self.setScene(self._scene)
+        self.zoom = 0
 
     #Change the image displayed
     def Display(self, img):
+        self.zoom = 0
         pixmap = QtGui.QPixmap(img)
         self.setDragMode(QtWidgets.QGraphicsView.ScrollHandDrag)
         self._photo.setPixmap(pixmap)
         self.fitInView(self._photo,QtCore.Qt.KeepAspectRatio)
 
     def wheelEvent(self, event):
-        if event.type() == QtCore.QEvent.Wheel:
+        if event.type() == QtCore.QEvent.Wheel and event.delta() < 0:
+            self.zoom += 1
             self.scaleView(math.pow(2.0, -event.delta() / 500.0))
             super(PopulationImages, self).wheelEvent(event)
+        elif event.type() == QtCore.QEvent.Wheel and event.delta() > 0:
+            if(self.zoom > 0):
+                self.zoom -= 1
+                self.scaleView(math.pow(2.0, -event.delta() / 500.0))
+                super(PopulationImages, self).wheelEvent(event)
         else:
             event.ignore()
 
@@ -278,7 +286,9 @@ class Scroll(QtWidgets.QScrollArea):
         self.setMinimumSize(600,600)
     
     def wheelEvent(self, event):
-        if event.type() == QtCore.QEvent.Wheel:
+        if(event.type() == QtCore.QEvent.Wheel):
+            super(Scroll, self).wheelEvent(event)
+        else:
             event.ignore()
 
 
