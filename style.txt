@@ -103,7 +103,7 @@ QPushButton#process:hover {
     color: white;
 }
 QPushButton#process:pressed {
-    background-color:#00e600;
+    background-color:#007400;
 }
 QPushButton#quit {
     background-color: #222222;
