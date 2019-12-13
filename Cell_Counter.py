@@ -488,7 +488,7 @@ class Window(QtWidgets.QWidget):
 
     #CHECK THE PATHS OF THE INPUT/PREFIX FIELD AND LAUNCH THE PROCESS OF COUNTING
     def Process(self):
-        if(self.ind.get_path() == "" or os.path.exists(self.ind.get_path()) == False or str(self.inputpref.text()) == "" ):
+        if(self.ind.get_path() == "" or os.path.exists(self.ind.get_path()) == False or str(self.inputpref.text()) == "" or os.path.isdir(self.ind.get_path()) == False ):
             msg = QtWidgets.QMessageBox()
             msg.setText( u"ERROR:\nNo folder was selected for input data and/or no prefix was entred" )
             msg.exec()
@@ -546,7 +546,7 @@ class Window(QtWidgets.QWidget):
                     for i in range(0,len(self.imgs)):
                         image = Image.open(self.imgs[i])
                         #TODO METTRE LE CODE D'ANALYSE ICI
-                        
+
                         time.sleep(0.005)
                         self.result.append(self.imgs[i])
 
