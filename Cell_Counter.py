@@ -1,5 +1,6 @@
 import sys, os, math
 import numpy as np
+from PIL import Image
 from PySide2.QtWidgets import QApplication, QMainWindow
 from PySide2 import QtCore, QtGui, QtWidgets
 from PySide2.QtCharts import QtCharts
@@ -543,7 +544,10 @@ class Window(QtWidgets.QWidget):
                     self.result = []
 
                     for i in range(0,len(self.imgs)):
-                        time.sleep(0.005) #TODO METTRE LE CODE D'ANALYSE ICI
+                        image = Image.open(self.imgs[i])
+                        #TODO METTRE LE CODE D'ANALYSE ICI
+                        
+                        time.sleep(0.005)
                         self.result.append(self.imgs[i])
 
                         self.X.append(i)
