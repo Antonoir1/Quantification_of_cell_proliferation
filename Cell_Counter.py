@@ -255,6 +255,9 @@ class PopulationImages(QtWidgets.QGraphicsView):
         self.setDragMode(QtWidgets.QGraphicsView.ScrollHandDrag)
         self._photo.setPixmap(pixmap)
         self.fitInView(self._photo,QtCore.Qt.KeepAspectRatio)
+    
+    def Adjust(self):
+        self.fitInView(self._photo,QtCore.Qt.KeepAspectRatio)
 
     def wheelEvent(self, event):
         if event.type() == QtCore.QEvent.Wheel and event.delta() < 0:
@@ -371,7 +374,7 @@ class Window(QtWidgets.QWidget):
         labelgraph.setMaximumWidth(200)
         labelgraph.setContentsMargins(0,50,0,15)
         self.Graph = PopulationGraph()
-        self.Graph.setMinimumHeight(300)
+        self.Graph.setMinimumHeight(304)
 
         #GLOBAL VARIABLES FOR PROCESSING IMAGES
         self.imgs = []
@@ -387,7 +390,7 @@ class Window(QtWidgets.QWidget):
         layoutimg.setContentsMargins(0,0,0,0)
         layoutimg.setSpacing(0)
         self.View = PopulationImages(self)
-        self.View.setMinimumHeight(300)
+        self.View.setMinimumHeight(357)
         self.labelimg = QtWidgets.QLabel("Population image:")
         self.labelimg.setObjectName("population_img")
         self.labelimg.setAlignment(QtCore.Qt.AlignBottom)
@@ -469,6 +472,18 @@ class Window(QtWidgets.QWidget):
                 self.Back()
             else:
                 event.ignore()
+    def resizeEvent(self, event):
+        if(self.View.width() <= 1100):
+            self.View.setFixedHeight(int(self.View.width()*0.75))
+        else:
+            self.View.setFixedHeight(int(1100*0.75))
+        self.View.Adjust()
+        
+        if(self.Graph.width() <= 1470):
+            self.Graph.setFixedHeight(int(0.5*self.Graph.width()))
+        else:
+            self.Graph.setFixedHeight(int(0.5*1470))
+        
 
     #CHECK THE PATHS OF THE INPUT/PREFIX FIELD AND LAUNCH THE PROCESS OF COUNTING
     def Process(self):
@@ -548,9 +563,14 @@ class Window(QtWidgets.QWidget):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    css = open("./style.txt","r")
-    css = css.read()
-    app.setStyleSheet(css)
+    try:
+        css = open("./style.txt","r")
+        css = css.read()
+        app.setStyleSheet(css)
+    except:
+        print("ERROR: File "+str(os.getcwd())+"\\style.txt not found")
+        print("The app will use the default style")
+
     window = Window()
     window.show()
     sys.exit(app.exec_())
