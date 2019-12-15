@@ -334,7 +334,7 @@ class Window(QtWidgets.QWidget):
         self.connect(escape, QtCore.SIGNAL("triggered()"),QtWidgets.qApp, QtCore.SLOT("quit()"))
         helpmenu = QtWidgets.QMenu()
         helpmenu.setTitle("Help")
-        manual = QtWidgets.QAction("Manual...",self)
+        manual = QtWidgets.QAction("Quick Start Guide...",self)
         helpmenu.addAction(manual)
         self.connect(manual, QtCore.SIGNAL("triggered()"), self, QtCore.SLOT("get_Help()"))
         bar.addMenu(filemenu)
@@ -495,7 +495,7 @@ class Window(QtWidgets.QWidget):
     def Open_Dir(self):
         self.ind.set_path(QtWidgets.QFileDialog.getExistingDirectory(parent=self,caption='Select directory'))
 
-    #DISPLAY HELP
+    #DISPLAY THE USER GUIDE
     def get_Help(self):
         msg = QtWidgets.QMessageBox()
         font = QtGui.QFont()
@@ -505,21 +505,21 @@ class Window(QtWidgets.QWidget):
         "<h2>Prerequisites</h2>"+
         "<ul><li>A folder containing .tiff or .tif images of your cell population</li>"+
         "<li>Every images must have the same prefix followed by an integer superior or equal to 0 (ex: prefix = population, images = population0, population1...)</li></ul>"+
-        "<h2>Guide</h2>"+
-        "<h3>Step 1</h3><p>Click on the 'Browse' button and select the folder containing your image (Shortcuts: CTRL+O)</p>"+
-        "<h3>Step 2</h3><p>Type your images's prefix in the prefix input field</p>"+
-        "<h3>Step 3</h3><p>Click on the 'Process Data' button to process your images (Shortcut: CTRL+P)</p>"+
-        "<h3>Step 4</h3><p>You can observe on the 'Cell population' graph the evolution of this cell population over time. By hovering your mouse on the graph you will see the points's values, and by selecting a part of the graph with the Left click you can zoom in (Left click to zoom out)</p>"+
-        "<h3>Step 5</h3><p>You can also observe on the 'Population image' displayer, on each timepoint the number of cells in your population with the buttons on both sides of the image (Shortcuts: CTRL+B = Last image, CTRL+N = Next image)</p>"+
+        "<h2>=================================</h2>"+
+        "<h2>Step 1: Add the path of your images folder</h2><p>Click on the 'Browse' button and select the folder containing your image (Shortcuts: CTRL+O)</p>"+
+        "<h2>Step 2: Add the images prefix</h2><p>Type your images's prefix in the prefix input field</p>"+
+        "<h2>Step 3: Launch the processing of the images</h2><p>Click on the 'Process Data' button to process your images (Shortcut: CTRL+P)</p>"+
+        "<h2>Step 4: Observe the results</h2><p>You can observe on the 'Cell population' graph the evolution of this cell population over time. By hovering your mouse on the graph you will see the points's values, and by selecting a part of the graph with the Left click you can zoom in (Left click to zoom out)</p><p>You can also observe on the 'Population image' displayer, on each timepoint the number of cells in your population with the buttons on both sides of the image (Shortcuts: CTRL+B = Last image, CTRL+N = Next image)</p>"+
         "</html>")
 
         scroll = QtWidgets.QScrollArea()
         scroll.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
         scroll.setWidgetResizable(True)
-        scroll.setFixedWidth(525)
+        scroll.setFixedWidth(750)
+        scroll.setFixedHeight(525)
         scroll.setWidget(msg)
-        scroll.setWindowTitle("Manual")
+        scroll.setWindowTitle("Quick Start Guide")
         scroll.show()
         msg.exec()
 
