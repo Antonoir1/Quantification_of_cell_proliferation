@@ -628,20 +628,31 @@ class Window(QtWidgets.QWidget):
                     self.labelprogress.setText("in progress...")
 
                     for i in range(0,len(self.imgs)):
-                        image = Image.open(self.path+"/"+self.imgs[i])
-                        #TODO METTRE LE CODE D'ANALYSE ICI
-                        self.result.append(self.imgs[i])
-
-                        self.X.append(i)
-                        self.Y.append(i+random.randint(0,25))
+                        try:
+                            image = Image.open(self.path+"/"+self.imgs[i])
+                            #TODO METTRE LE CODE D'ANALYSE ICI
+                            
+                            self.result.append(self.imgs[i])
+                            self.X.append(i)
+                            self.Y.append(i+random.randint(0,25))
+                        except:
+                            continue
+                        
                         work += (1/(len(imgs)-1))*100
                         self.progress.setValue(work)
-                    
-                    self.labelprogress.setText("done.")
-                    self.Graph.setPopulation(self.X,self.Y)
-                    self.View.Display(self.path+"/"+self.result[0])
-                    self.position = 0
-                    self.labelimg.setText("Population image: 1/"+str(len(self.result))+" Cells: "+str(self.Y[0]))
+
+                    if(len(self.result) == 0):
+                        self.labelprogress.setText("An error has occured.")
+                        msg = QtWidgets.QMessageBox()
+                        msg.setWindowTitle("Error")
+                        msg.setText( u"ERROR:\nThe images could not be processed. Check if the file model.h5 is on the same folder as the .exe file" )
+                        msg.exec()
+                    else:
+                        self.labelprogress.setText("done.")
+                        self.Graph.setPopulation(self.X,self.Y)
+                        self.View.Display(self.path+"/"+self.result[0])
+                        self.position = 0
+                        self.labelimg.setText("Population image: 1/"+str(len(self.result))+" Cells: "+str(self.Y[0]))
                         
 
 
