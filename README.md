@@ -14,13 +14,13 @@ The goal of this project was to make a tool for the researchers (in the cancer c
 ## Prerequisites optional (Run the code directly)
 
 <ul>
-<li>python 3 (https://www.python.org/)</li>
-<li>Qt5</Li>
-<li>PySide2</li>
-<li>numpy (https://pypi.org/project/numpy/)</li>
-<li>PIL</li>
-<li>Tensorflow</li>
-<li>Keras</li>
+<li>python 3 (https://www.python.org)</li>
+<li>Qt5 (https://www.qt.io)</Li>
+<li>PySide2 (https://wiki.qt.io/Qt_for_Python)</li>
+<li>numpy (https://pypi.org/project/numpy)</li>
+<li>PIL (https://pypi.org/project/Pillow)</li>
+<li>Tensorflow (https://www.tensorflow.org)</li>
+<li>Keras (https://keras.io)</li>
 </ul>
 
 ## Run
