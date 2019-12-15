@@ -400,7 +400,7 @@ class Window(QtWidgets.QWidget):
         labelin.setContentsMargins(0,50,0,15)
 
         #INPUT FORMAT
-        labelpref = QtWidgets.QLabel("Images Prefix (ex: time => time01.tiff, time02.tiff...):")
+        labelpref = QtWidgets.QLabel("Images Prefix (ex: time => time1.tiff, time2.tiff...):")
         labelpref.setObjectName("prefix")
         labelpref.setAlignment(QtCore.Qt.AlignBottom)
         font.setPointSize(12)
