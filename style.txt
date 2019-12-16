@@ -13,6 +13,9 @@ QLabel#path {
 QLabel#prefix {
     color: #ececec;
 }
+QLabel#progression {
+    color: #ececec;
+}
 QLabel#population {
     color: #ececec;
 }

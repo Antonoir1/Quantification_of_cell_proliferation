@@ -1,10 +1,11 @@
 import sys, os, math
 import numpy as np
+from PIL import Image
 from PySide2.QtWidgets import QApplication, QMainWindow
 from PySide2 import QtCore, QtGui, QtWidgets
 from PySide2.QtCharts import QtCharts
 
-import time, random
+import random
 
 
 #CLASS TO HANDLE THE IUTPUT PATH FIELD AND BROWSE BUTTON
@@ -45,6 +46,10 @@ class InputData(QtWidgets.QWidget):
         path = QtWidgets.QFileDialog.getExistingDirectory(parent=self,caption='Select directory')
         self.label3.setText(str(path))
         self.repaint()
+    
+    def set_path(self,path):
+        self.label3.setText(str(path))
+        self.repaint()
 
     #RETURN THE INPUT PATH FIELD
     def get_path(self):
@@ -61,6 +66,7 @@ class Callout(QtWidgets.QGraphicsItem):
         self._font = QtGui.QFont()
         self._rect = QtCore.QRectF()
 
+    #Rect for the callout
     def boundingRect(self):
         anchor = self.mapFromParent(self._chart.mapToPosition(self._anchor))
         rect = QtCore.QRectF()
@@ -71,6 +77,7 @@ class Callout(QtWidgets.QGraphicsItem):
 
         return rect
 
+    #Draw the callout
     def paint(self, painter, option, widget):
         path = QtGui.QPainterPath()
         path.addRoundedRect(self._rect, 5, 5)
@@ -124,9 +131,11 @@ class Callout(QtWidgets.QGraphicsItem):
         painter.drawPath(path)
         painter.drawText(self._textRect, self._text)
 
+    #Click event
     def mousePressEvent(self, event):
         event.setAccepted(True)
 
+    #Hovering event
     def mouseMoveEvent(self, event):
         if event.buttons() & QtCore.Qt.LeftButton:
             self.setPos(self.mapToParent(
@@ -135,6 +144,7 @@ class Callout(QtWidgets.QGraphicsItem):
         else:
             event.setAccepted(False)
 
+    #Set the text
     def setText(self, text):
         self._text = text
         metrics = QtGui.QFontMetrics(self._font)
@@ -144,9 +154,11 @@ class Callout(QtWidgets.QGraphicsItem):
         self.prepareGeometryChange()
         self._rect = self._textRect.adjusted(-5, -5, 5, 5)
 
+    #Set the anchor
     def setAnchor(self, pointX, pointY):
         self._anchor = QtCore.QPointF(pointX, pointY)
 
+    #Update the geometry
     def updateGeometry(self):
         self.prepareGeometryChange()
         self.setPos(self._chart.mapToPosition(
@@ -255,7 +267,12 @@ class PopulationImages(QtWidgets.QGraphicsView):
         self.setDragMode(QtWidgets.QGraphicsView.ScrollHandDrag)
         self._photo.setPixmap(pixmap)
         self.fitInView(self._photo,QtCore.Qt.KeepAspectRatio)
+    
+    #Adjut the image if the window has been resized
+    def Adjust(self):
+        self.fitInView(self._photo,QtCore.Qt.KeepAspectRatio)
 
+    #Scroll event
     def wheelEvent(self, event):
         if event.type() == QtCore.QEvent.Wheel and event.delta() < 0:
             self.zoom += 1
@@ -269,6 +286,7 @@ class PopulationImages(QtWidgets.QGraphicsView):
         else:
             event.ignore()
 
+    #Rescale the image  with a factor
     def scaleView(self, factor):
         f = self.matrix().scale(factor, factor). \
                     mapRect(QtCore.QRectF(0, 0, 1, 1)).width()
@@ -285,6 +303,7 @@ class Scroll(QtWidgets.QScrollArea):
         self.setWidgetResizable(True)
         self.setMinimumSize(600,600)
     
+    #Scroll event
     def wheelEvent(self, event):
         if(event.type() == QtCore.QEvent.Wheel):
             super(Scroll, self).wheelEvent(event)
@@ -296,6 +315,30 @@ class Scroll(QtWidgets.QScrollArea):
 class Window(QtWidgets.QWidget):
     def __init__(self,parent=None):
         QtWidgets.QWidget.__init__(self,parent)
+
+        #MENU BARS
+        bar = QtWidgets.QMenuBar()
+        filemenu = QtWidgets.QMenu()
+        filemenu.setTitle("File")
+        opendir = QtWidgets.QAction("Open Directory",self)
+        opendir.setShortcut("Ctrl+O")
+        filemenu.addAction(opendir)
+        self.connect(opendir, QtCore.SIGNAL("triggered()"), self, QtCore.SLOT("Open_Dir()"))
+        process = QtWidgets.QAction("Process Data",self)
+        process.setShortcut("Ctrl+P")
+        filemenu.addAction(process)
+        self.connect(process, QtCore.SIGNAL("triggered()"), self, QtCore.SLOT("Process()"))
+        escape = QtWidgets.QAction("Quit",self)
+        escape.setShortcut("Escape")
+        filemenu.addAction(escape)
+        self.connect(escape, QtCore.SIGNAL("triggered()"),QtWidgets.qApp, QtCore.SLOT("quit()"))
+        helpmenu = QtWidgets.QMenu()
+        helpmenu.setTitle("Help")
+        manual = QtWidgets.QAction("Quick Start Guide...",self)
+        helpmenu.addAction(manual)
+        self.connect(manual, QtCore.SIGNAL("triggered()"), self, QtCore.SLOT("get_Help()"))
+        bar.addMenu(filemenu)
+        bar.addMenu(helpmenu)
 
         #TITLE
         Title = QtWidgets.QLabel("Cell Counter")
@@ -318,7 +361,14 @@ class Window(QtWidgets.QWidget):
         #PROGRESS BAR
         self.progress = QtWidgets.QProgressBar(self)
         self.progress.setObjectName("progress")
+        font.setPointSize(11)
+        self.progress.setFont(font)
         self.progress.setMinimumHeight(40)
+        self.labelprogress = QtWidgets.QLabel("")
+        self.labelprogress.setObjectName("progression")
+        self.labelprogress.setAlignment(QtCore.Qt.AlignTop)
+        self.labelprogress.setFont(font)
+        font.setPointSize(16)
 
         #QUIT BUTTON
         quitting = QtWidgets.QPushButton("QUIT")
@@ -350,7 +400,7 @@ class Window(QtWidgets.QWidget):
         labelin.setContentsMargins(0,50,0,15)
 
         #INPUT FORMAT
-        labelpref = QtWidgets.QLabel("Images Prefix (ex: time => time01.tiff, time02.tiff...):")
+        labelpref = QtWidgets.QLabel("Images Prefix (ex: time => time1.tiff, time2.tiff...):")
         labelpref.setObjectName("prefix")
         labelpref.setAlignment(QtCore.Qt.AlignBottom)
         font.setPointSize(12)
@@ -371,7 +421,7 @@ class Window(QtWidgets.QWidget):
         labelgraph.setMaximumWidth(200)
         labelgraph.setContentsMargins(0,50,0,15)
         self.Graph = PopulationGraph()
-        self.Graph.setMinimumHeight(300)
+        self.Graph.setMinimumHeight(304)
 
         #GLOBAL VARIABLES FOR PROCESSING IMAGES
         self.imgs = []
@@ -387,7 +437,7 @@ class Window(QtWidgets.QWidget):
         layoutimg.setContentsMargins(0,0,0,0)
         layoutimg.setSpacing(0)
         self.View = PopulationImages(self)
-        self.View.setMinimumHeight(300)
+        self.View.setMinimumHeight(357)
         self.labelimg = QtWidgets.QLabel("Population image:")
         self.labelimg.setObjectName("population_img")
         self.labelimg.setAlignment(QtCore.Qt.AlignBottom)
@@ -418,6 +468,7 @@ class Window(QtWidgets.QWidget):
         self.layout.addWidget(self.inputpref)
         self.layout.addWidget(process)
         self.layout.addWidget(self.progress)
+        self.layout.addWidget(self.labelprogress)
         self.layout.addWidget(labelgraph)
         self.layout.addWidget(self.Graph)
         self.layout.addWidget(self.labelimg)
@@ -435,8 +486,42 @@ class Window(QtWidgets.QWidget):
         #SCROLLING BAR LAYOUT
         vlayout = QtWidgets.QVBoxLayout(self)
         vlayout.setContentsMargins(0,0,0,0)
+        vlayout.setSpacing(0)
+        vlayout.addWidget(bar)
         vlayout.addWidget(self.scroll)
         self.setLayout(vlayout)
+
+    #SELECT DIRECTORY (SHORTCUT CTRL+O)
+    def Open_Dir(self):
+        self.ind.set_path(QtWidgets.QFileDialog.getExistingDirectory(parent=self,caption='Select directory'))
+
+    #DISPLAY THE USER GUIDE
+    def get_Help(self):
+        msg = QtWidgets.QMessageBox()
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        msg.setFont(font)
+        msg.setText("<html><h1>Manual</h1>"+
+        "<h2>Prerequisites</h2>"+
+        "<ul><li>A folder containing .tiff or .tif images of your cell population</li>"+
+        "<li>Every images must have the same prefix followed by an integer superior or equal to 0 (ex: prefix = population, images = population0, population1...)</li></ul>"+
+        "<h2>=================================</h2>"+
+        "<h2>Step 1: Add the path of your images folder</h2><p>Click on the 'Browse' button and select the folder containing your image (Shortcuts: CTRL+O)</p>"+
+        "<h2>Step 2: Add the images prefix</h2><p>Type your images's prefix in the prefix input field</p>"+
+        "<h2>Step 3: Launch the processing of the images</h2><p>Click on the 'Process Data' button to process your images (Shortcut: CTRL+P)</p>"+
+        "<h2>Step 4: Observe the results</h2><p>You can observe on the 'Cell population' graph the evolution of this cell population over time. By hovering your mouse on the graph you will see the points's values, and by selecting a part of the graph with the Left click you can zoom in (Left click to zoom out)</p><p>You can also observe on the 'Population image' displayer, on each timepoint the number of cells in your population with the buttons on both sides of the image (Shortcuts: CTRL+B = Last image, CTRL+N = Next image)</p>"+
+        "</html>")
+
+        scroll = QtWidgets.QScrollArea()
+        scroll.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
+        scroll.setWidgetResizable(True)
+        scroll.setFixedWidth(750)
+        scroll.setFixedHeight(525)
+        scroll.setWidget(msg)
+        scroll.setWindowTitle("Quick Start Guide")
+        scroll.show()
+        msg.exec()
 
     #GO TO THE NEXT IMAGE
     def Next(self):
@@ -455,11 +540,6 @@ class Window(QtWidgets.QWidget):
 
     #SHORTCUTS: NEXT IMAGE (CTRL + N)  LAST IMAGE(CTRL + B) 
     def keyPressEvent(self, event):
-        if(event.key() == QtCore.Qt.Key_Return):
-            self.Process()
-        elif(event.key() == QtCore.Qt.Key_Escape):
-            QApplication.quit()
-        else:
             k = event.key()
             m = int(event.modifiers())
             
@@ -469,17 +549,33 @@ class Window(QtWidgets.QWidget):
                 self.Back()
             else:
                 event.ignore()
+    
+    #DYNAMIC HEIGHT FOR THE GRAPH AND THE IMAGE OF THE POPULATION
+    def resizeEvent(self, event):
+        if(self.View.width() <= 1100):
+            self.View.setFixedHeight(int(self.View.width()*0.75))
+        else:
+            self.View.setFixedHeight(int(1100*0.75))
+        self.View.Adjust()
+        
+        if(self.Graph.width() <= 1470):
+            self.Graph.setFixedHeight(int(0.5*self.Graph.width()))
+        else:
+            self.Graph.setFixedHeight(int(0.5*1470))
+        
 
     #CHECK THE PATHS OF THE INPUT/PREFIX FIELD AND LAUNCH THE PROCESS OF COUNTING
     def Process(self):
-        if(self.ind.get_path() == "" or os.path.exists(self.ind.get_path()) == False or str(self.inputpref.text()) == "" ):
+        if(self.ind.get_path() == "" or os.path.exists(self.ind.get_path()) == False or str(self.inputpref.text()) == "" or os.path.isdir(self.ind.get_path()) == False ):
             msg = QtWidgets.QMessageBox()
+            msg.setWindowTitle("Warning")
             msg.setText( u"ERROR:\nNo folder was selected for input data and/or no prefix was entred" )
             msg.exec()
         else:
             files = os.listdir(self.ind.get_path())
             if len(files) == 0:
                 msg = QtWidgets.QMessageBox()
+                msg.setWindowTitle("Warning")
                 msg.setText( u"ERROR:\nNo image .tif/.tiff found in the input folder" )
                 msg.exec()
             else:
@@ -500,6 +596,7 @@ class Window(QtWidgets.QWidget):
                                     imgs.append(files[i])
                 if(have_images == False):
                     msg = QtWidgets.QMessageBox()
+                    msg.setWindowTitle("Warning")
                     msg.setText( u"ERROR:\nNo image .tif/.tiff found in the input folder and/or the prefix value is uncorrect" )
                     msg.exec()
                 else:
@@ -526,31 +623,51 @@ class Window(QtWidgets.QWidget):
                     self.X = []
                     self.Y = []
                     self.result = []
-
-                    for i in range(0,len(self.imgs)):
-                        time.sleep(0.005) #TODO METTRE LE CODE D'ANALYSE ICI
-                        self.result.append(self.imgs[i])
-
-                        self.X.append(i)
-                        self.Y.append(i+random.randint(0,25))
-                        work += (1/(len(imgs)-1))*100
-                        self.progress.setValue(work)
-                    
-                    self.Graph.setPopulation(self.X,self.Y)
-                    self.View.Display(self.ind.get_path()+"/"+self.result[0])
-                    self.position = 0
                     self.path = self.ind.get_path()
                     self.prefix = str(self.inputpref.text())
-                    self.labelimg.setText("Population image: 1/"+str(len(self.result))+" Cells: "+str(self.Y[0]))
+                    self.labelprogress.setText("in progress...")
+
+                    for i in range(0,len(self.imgs)):
+                        try:
+                            image = Image.open(self.path+"/"+self.imgs[i])
+                            #TODO METTRE LE CODE D'ANALYSE ICI
+                            
+                            self.result.append(self.imgs[i])
+                            self.X.append(i)
+                            self.Y.append(i+random.randint(0,25))
+                        except:
+                            continue
+                        
+                        work += (1/(len(imgs)-1))*100
+                        self.progress.setValue(work)
+
+                    if(len(self.result) == 0):
+                        self.labelprogress.setText("An error has occured.")
+                        msg = QtWidgets.QMessageBox()
+                        msg.setWindowTitle("Error")
+                        msg.setText( u"ERROR:\nThe images could not be processed. Check if the file model.h5 is on the same folder as the .exe file" )
+                        msg.exec()
+                    else:
+                        self.labelprogress.setText("done.")
+                        self.Graph.setPopulation(self.X,self.Y)
+                        self.View.Display(self.path+"/"+self.result[0])
+                        self.position = 0
+                        self.labelimg.setText("Population image: 1/"+str(len(self.result))+" Cells: "+str(self.Y[0]))
                         
 
 
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    css = open("./style.txt","r")
-    css = css.read()
-    app.setStyleSheet(css)
+    try:
+        css = open("./style.txt","r")
+        css = css.read()
+        app.setStyleSheet(css)
+    except:
+        print("ERROR: File "+str(os.getcwd())+"\\style.txt not found")
+        print("The app will use the default style")
+
     window = Window()
+    window.setWindowTitle("Cell Counter")
     window.show()
     sys.exit(app.exec_())
