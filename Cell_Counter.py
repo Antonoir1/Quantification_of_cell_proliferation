@@ -176,7 +176,8 @@ class PopulationGraph(QtWidgets.QWidget):
         self.View.setRubberBand(QtCharts.QChartView.HorizontalRubberBand)
         self.View.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)
         self.line = QtCharts.QLineSeries()
-        self.area = QtCharts.QAreaSeries(self.line)
+        self.zeros = QtCharts.QLineSeries()
+        self.area = QtCharts.QAreaSeries(self.line,self.zeros)
         self.area.setBrush(QtGui.QBrush(QtCore.Qt.red))
         self.area.setBorderColor(QtCore.Qt.gray)
         self.area.setName("Cells")
@@ -232,8 +233,10 @@ class PopulationGraph(QtWidgets.QWidget):
         self.X = X
         self.Y = Y
         self.line.clear()
+        self.zeros.clear()
         for i in range(0,len(X)):
             self.line.append(X[i],Y[i])
+            self.zeros.append(X[i],0)
         self.chart.removeSeries(self.area)
         self.chart.addSeries(self.area)
         self.chart.createDefaultAxes()

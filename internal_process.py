@@ -57,15 +57,23 @@ def count(prediction_array):
 	return s
 
 # call the methode above
-def act(img, i):
+def act(img, index):
 	C=cutter(Image.open(img))
 	points=C[0]
 	points=point(points)
 	s=count(points)
 	final=glue(points,C[1],C[2])
-	
 	final = (final*255).astype(np.uint8)
-	im = Image.fromarray(final)
-	im.save("./tmp/tmp"+str(i)+".tiff")
+
+	img_tmp = np.array(Image.open(img).convert("RGB"))
+	for i in range(0,final.shape[0]):
+		for j in range(0,final.shape[1]):
+			if(final[i,j] >= 204):
+				img_tmp[i,j][0] = 255
+				img_tmp[i,j][1] = 0
+				img_tmp[i,j][2] = 0
+
+	img_final = Image.fromarray(img_tmp)
+	img_final.save("./tmp/tmp"+str(index)+".tiff")
 	return s
 		
