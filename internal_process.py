@@ -2,23 +2,22 @@ import numpy as np
 import tensorflow as tf
 from tensorflow import keras
 from PIL import *
-from PIL import Image
+from PIL import Image, ImageOps
 import matplotlib.pyplot as plt
-#M=tf.keras.models.load_model("")
-C=tf.keras.models.load_model("compteur2_pour_erreur.h5")
+
+M=tf.keras.models.load_model("./models/Unet_1_16.h5")
+C=tf.keras.models.load_model("./models/compteur2.h5")
 
 #input: a picture
 #return a list of 512*512*1 array croped from the picture X and Y
 def cutter(img):
 	i=np.array(img)
-	#print(i.shape)
 	s=512
 	xreturn=np.empty([0,512,512],dtype=int)
 	Y=s
 	while Y<i.shape[1]:
 		X=s
 		while X<i.shape[0]:
-			print(X,Y)
 			xreturn=np.append(xreturn,[i[X-s:X,Y-s:Y]],axis=0)
 
 			X=X+s
@@ -58,15 +57,15 @@ def count(prediction_array):
 	return s
 
 # call the methode above
-def act(img):
-	C=cutter(img)
+def act(img, i):
+	C=cutter(Image.open(img))
 	points=C[0]
-	#points=point(points)
+	points=point(points)
 	s=count(points)
 	final=glue(points,C[1],C[2])
-	return final,s
+	
+	final = (final*255).astype(np.uint8)
+	im = Image.fromarray(final)
+	im.save("./tmp/tmp"+str(i)+".tiff")
+	return s
 		
-
-
-img=Image.open("stack1_T1.tif")
-print(act(img))

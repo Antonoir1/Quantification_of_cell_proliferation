@@ -1,12 +1,11 @@
 import sys, os, math
-import numpy as np
-from PIL import Image
 from PySide2.QtWidgets import QApplication, QMainWindow
 from PySide2 import QtCore, QtGui, QtWidgets
 from PySide2.QtCharts import QtCharts
 
-import random
-
+from internal_process import act
+import numpy as np
+from PIL import Image
 
 #CLASS TO HANDLE THE IUTPUT PATH FIELD AND BROWSE BUTTON
 class InputData(QtWidgets.QWidget):
@@ -528,14 +527,15 @@ class Window(QtWidgets.QWidget):
         if(len(self.result)):
             if(self.position < (len(self.result)-1)):
                 self.position += 1
-                self.View.Display(self.path+"/"+self.result[self.position])
+                self.View.Display("./tmp/"+self.result[self.position])
                 self.labelimg.setText("Population image: "+str(self.position+1)+"/"+str(len(self.result))+" Cells: "+str(self.Y[self.position]))
 
     #GO BACK TO THE LAST IMAGE
     def Back(self):
-        if(self.position > 0):
+        if(len(self.result)):
+            if(self.position > 0):
                 self.position -= 1
-                self.View.Display(self.path+"/"+self.result[self.position])
+                self.View.Display("./tmp/"+self.result[self.position])
                 self.labelimg.setText("Population image: "+str(self.position+1)+"/"+str(len(self.result))+" Cells: "+str(self.Y[self.position]))
 
     #SHORTCUTS: NEXT IMAGE (CTRL + N)  LAST IMAGE(CTRL + B) 
@@ -566,6 +566,7 @@ class Window(QtWidgets.QWidget):
 
     #CHECK THE PATHS OF THE INPUT/PREFIX FIELD AND LAUNCH THE PROCESS OF COUNTING
     def Process(self):
+        #CHECK IF THE IMAGES HAVE THE RIGHT FORMAT
         if(self.ind.get_path() == "" or os.path.exists(self.ind.get_path()) == False or str(self.inputpref.text()) == "" or os.path.isdir(self.ind.get_path()) == False ):
             msg = QtWidgets.QMessageBox()
             msg.setWindowTitle("Warning")
@@ -619,6 +620,12 @@ class Window(QtWidgets.QWidget):
                         while(unordered[i] != ordering[k][0] and k < len(ordering)):
                             k += 1
                         self.imgs.append(ordering[k][1])
+
+                    for filename in os.listdir("./tmp"):
+                        os.remove("./tmp/"+filename)
+                        QtCore.QCoreApplication.processEvents()
+
+                    #PROCESS THE IMAGES
                     work = 0
                     self.X = []
                     self.Y = []
@@ -626,15 +633,13 @@ class Window(QtWidgets.QWidget):
                     self.path = self.ind.get_path()
                     self.prefix = str(self.inputpref.text())
                     self.labelprogress.setText("in progress...")
-
                     for i in range(0,len(self.imgs)):
+                        CellCount = act(self.path+"/"+self.imgs[i], i)
                         try:
-                            image = Image.open(self.path+"/"+self.imgs[i])
-                            #TODO METTRE LE CODE D'ANALYSE ICI
-                            
-                            self.result.append(self.imgs[i])
+                            self.result.append("tmp"+str(i)+".tiff")
                             self.X.append(i)
-                            self.Y.append(i+random.randint(0,25))
+                            self.Y.append(CellCount)
+                            QtCore.QCoreApplication.processEvents()
                         except:
                             continue
                         
@@ -650,7 +655,7 @@ class Window(QtWidgets.QWidget):
                     else:
                         self.labelprogress.setText("done.")
                         self.Graph.setPopulation(self.X,self.Y)
-                        self.View.Display(self.path+"/"+self.result[0])
+                        self.View.Display("./tmp/"+self.result[0])
                         self.position = 0
                         self.labelimg.setText("Population image: 1/"+str(len(self.result))+" Cells: "+str(self.Y[0]))
                         
