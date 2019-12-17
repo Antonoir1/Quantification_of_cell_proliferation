@@ -12,21 +12,34 @@ C=tf.keras.models.load_model("./models/compteur2.h5")
 #return a list of 512*512*1 array croped from the picture X and Y
 def cutter(img):
 	i=np.array(img)
-	s=512
 	xreturn=np.empty([0,512,512],dtype=int)
-	Y=s
-	while Y<i.shape[1]:
-		X=s
-		while X<i.shape[0]:
-			xreturn=np.append(xreturn,[i[X-s:X,Y-s:Y]],axis=0)
+	Y=int(1+(i.shape[1]-i.shape[1]%512)/512)
+	X=int(1+(i.shape[0]-i.shape[0]%512)/512)
+	for y in range(Y):
+		for x in range(X):
+			zero=np.zeros([512,512])
+			droite=min((1+x)*512,i.shape[0])
+			haut=min((1+y)*512,i.shape[1])
+			gauche=droite-512
+			bas=haut-512
+			xm=512
+			ym=512
+			if haut%512>0:
+				
+				bas=haut-haut%512
+				ym=haut%512
+			if droite%512>0:
+				
+				gauche=droite-droite%512
+				xm=droite%512
 
-			X=X+s
-		#ad a way to deal with all size of picture
-		Y=Y+s
-	
+			zero[0:xm,0:ym]=i[gauche:droite,bas:haut]
+			
+			xreturn=np.append(xreturn,[zero],axis=0)
+	xreturn=xreturn.reshape(len(xreturn),512,512,1)
+	return xreturn,X,Y
 
-	xreturn=xreturn.reshape(len(xreturn),s,s,1)
-	return xreturn,X-512,Y-512 
+
 
 #input: a array of croped pictures 512*512
 #output: a array of pictures with cells anotated
@@ -39,12 +52,14 @@ def point(im_array):
 #put the picture back in one piece
 def glue(p,X,Y):
 	p=p.reshape(len(p),512,512)
-	imr=np.zeros((X,Y))
-	for x in range(int(X/512)):
-		for y in range(int(Y/512)):
+	
+	img=np.zeros([X*512,Y*512])
+	for y in range(Y):
+		for x in range(X):
+			
+			img[x*512:(x+1)*512,y*512:(y+1)*512]=p[y*(Y-1)+x]
+	return img
 
-			imr[x*512:(x+1)*512,y*512:(y+1)*512,]=p[y*int(X/512)+x]
-	return imr
 
 #input: a array of croped pictures 512*512
 # count the cells in a anotated picture array
