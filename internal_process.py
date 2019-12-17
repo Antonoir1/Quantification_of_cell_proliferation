@@ -71,6 +71,19 @@ def count(prediction_array):
 
 	return s
 
+#alternative version for count, need the full anotated picture as a input
+def count2(img):
+	#filtre:
+	filtre=0.8
+	for x in range(img.shape[0]):
+		for y in range(img.shape[1]):
+			if img[x][y]<filtre:
+				img[x][y]=0 
+	s=sum(img)
+	s=sum(s)
+	s=int(s/(12*12))
+	return s 
+
 # call the methode above
 def act(img, index):
 	C=cutter(Image.open(img))
