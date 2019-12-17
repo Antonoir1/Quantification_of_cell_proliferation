@@ -7,6 +7,31 @@ from internal_process import act
 import numpy as np
 from PIL import Image
 
+#CLASS HANDLING THE PROCESSING THREAD WORKER
+class Woker(QtCore.QObject):
+    finished = QtCore.Signal()
+    working = QtCore.Signal(int)
+
+    def __init__(self, window):
+        QtCore.QObject.__init__(self)
+        self.window = window
+
+    def process(self):
+        #PROCESS THE IMAGES
+        work_prog = 0
+        for i in range(0,len(self.window.imgs)):
+            try:
+                CellCount = act(self.window.path+"/"+self.window.imgs[i], i)
+                self.window.result.append("tmp"+str(i)+".tiff")
+                self.window.X.append(i)
+                self.window.Y.append(CellCount)
+            except:
+                continue
+
+            work_prog += (1/(len(self.window.imgs)-1))*100
+            self.working.emit(work_prog)
+        self.finished.emit()
+
 #CLASS TO HANDLE THE IUTPUT PATH FIELD AND BROWSE BUTTON
 class InputData(QtWidgets.QWidget):
     def __init__(self, parent=None):
@@ -318,6 +343,16 @@ class Window(QtWidgets.QWidget):
     def __init__(self,parent=None):
         QtWidgets.QWidget.__init__(self,parent)
 
+        #PROCESS THREAD
+        self.worker1 = Woker(self)
+        self.thread = QtCore.QThread()
+        self.worker1.moveToThread(self.thread)
+        self.processing = QtCore.Signal()
+        self.connect(self, QtCore.SIGNAL("processing()"), self.worker1, QtCore.SLOT("process()"))
+        self.thread.start()
+
+        self.worker1.finished.connect(self.End_Process)
+
         #MENU BARS
         bar = QtWidgets.QMenuBar()
         filemenu = QtWidgets.QMenu()
@@ -326,14 +361,10 @@ class Window(QtWidgets.QWidget):
         opendir.setShortcut("Ctrl+O")
         filemenu.addAction(opendir)
         self.connect(opendir, QtCore.SIGNAL("triggered()"), self, QtCore.SLOT("Open_Dir()"))
-        process = QtWidgets.QAction("Process Data",self)
-        process.setShortcut("Ctrl+P")
-        filemenu.addAction(process)
-        self.connect(process, QtCore.SIGNAL("triggered()"), self, QtCore.SLOT("Process()"))
         escape = QtWidgets.QAction("Quit",self)
         escape.setShortcut("Escape")
         filemenu.addAction(escape)
-        self.connect(escape, QtCore.SIGNAL("triggered()"),QtWidgets.qApp, QtCore.SLOT("quit()"))
+        self.connect(escape, QtCore.SIGNAL("triggered()"),self, QtCore.SLOT("Delete()"))
         helpmenu = QtWidgets.QMenu()
         helpmenu.setTitle("Help")
         manual = QtWidgets.QAction("Quick Start Guide...",self)
@@ -354,11 +385,11 @@ class Window(QtWidgets.QWidget):
 
         #PROGRESS BUTTON
         font.setPointSize(16)
-        process = QtWidgets.QPushButton("Process Data")
-        process.setObjectName("process")
-        process.setFixedHeight(50)
-        process.setFont(font)
-        process.clicked.connect(self.Process)
+        self.processB = QtWidgets.QPushButton("Process Data")
+        self.processB.setObjectName("process")
+        self.processB.setFixedHeight(50)
+        self.processB.setFont(font)
+        self.processB.clicked.connect(self.Process)
 
         #PROGRESS BAR
         self.progress = QtWidgets.QProgressBar(self)
@@ -371,6 +402,7 @@ class Window(QtWidgets.QWidget):
         self.labelprogress.setAlignment(QtCore.Qt.AlignTop)
         self.labelprogress.setFont(font)
         font.setPointSize(16)
+        self.worker1.working.connect(self.progress.setValue)
 
         #QUIT BUTTON
         quitting = QtWidgets.QPushButton("QUIT")
@@ -378,7 +410,7 @@ class Window(QtWidgets.QWidget):
         quitting.setObjectName("quit")
         quitting.setFixedHeight(50)
         self.connect(quitting, QtCore.SIGNAL("clicked()"),
-                             QtWidgets.qApp, QtCore.SLOT("quit()"))
+                             self, QtCore.SLOT("Delete()"))
 
         #LAYOUTS (GLOBAL LAYOUT, INPUT LAYOUT, OUTPUT LAYOUT)
         self.layout = QtWidgets.QVBoxLayout()
@@ -468,7 +500,7 @@ class Window(QtWidgets.QWidget):
         self.layout.addLayout(layoutin)
         self.layout.addWidget(labelpref)
         self.layout.addWidget(self.inputpref)
-        self.layout.addWidget(process)
+        self.layout.addWidget(self.processB)
         self.layout.addWidget(self.progress)
         self.layout.addWidget(self.labelprogress)
         self.layout.addWidget(labelgraph)
@@ -492,6 +524,17 @@ class Window(QtWidgets.QWidget):
         vlayout.addWidget(bar)
         vlayout.addWidget(self.scroll)
         self.setLayout(vlayout)
+
+    #DETECT CLOSING EVENT
+    def closeEvent(self, event):
+        self.thread.quit()
+        self.deleteLater()
+        event.accept()
+
+    #DELETE THE THREAD BEFORE EXITING
+    def Delete(self):
+        self.thread.quit()
+        QtWidgets.qApp.quit()
 
     #SELECT DIRECTORY (SHORTCUT CTRL+O)
     def Open_Dir(self):
@@ -565,6 +608,19 @@ class Window(QtWidgets.QWidget):
             self.Graph.setFixedHeight(int(0.5*self.Graph.width()))
         else:
             self.Graph.setFixedHeight(int(0.5*1470))
+
+    #EXECUTED AT THE END OF THE PROCESS
+    def End_Process(self):
+        if(len(self.result) != 0):
+            self.labelprogress.setText("done.")
+            self.Graph.setPopulation(self.X,self.Y)
+            self.View.Display("./tmp/"+self.result[0])
+            self.position = 0
+            self.labelimg.setText("Population image: 1/"+str(len(self.result))+" Cells: "+str(self.Y[0]))
+            self.processB.setEnabled(True)
+        else:
+            print("erreur")
+
         
 
     #CHECK THE PATHS OF THE INPUT/PREFIX FIELD AND LAUNCH THE PROCESS OF COUNTING
@@ -628,39 +684,15 @@ class Window(QtWidgets.QWidget):
                         os.remove("./tmp/"+filename)
                         QtCore.QCoreApplication.processEvents()
 
-                    #PROCESS THE IMAGES
-                    work = 0
                     self.X = []
                     self.Y = []
                     self.result = []
                     self.path = self.ind.get_path()
                     self.prefix = str(self.inputpref.text())
                     self.labelprogress.setText("in progress...")
-                    for i in range(0,len(self.imgs)):
-                        CellCount = act(self.path+"/"+self.imgs[i], i)
-                        try:
-                            self.result.append("tmp"+str(i)+".tiff")
-                            self.X.append(i)
-                            self.Y.append(CellCount)
-                            QtCore.QCoreApplication.processEvents()
-                        except:
-                            continue
-                        
-                        work += (1/(len(imgs)-1))*100
-                        self.progress.setValue(work)
-
-                    if(len(self.result) == 0):
-                        self.labelprogress.setText("An error has occured.")
-                        msg = QtWidgets.QMessageBox()
-                        msg.setWindowTitle("Error")
-                        msg.setText( u"ERROR:\nThe images could not be processed. Check if the file model.h5 is on the same folder as the .exe file" )
-                        msg.exec()
-                    else:
-                        self.labelprogress.setText("done.")
-                        self.Graph.setPopulation(self.X,self.Y)
-                        self.View.Display("./tmp/"+self.result[0])
-                        self.position = 0
-                        self.labelimg.setText("Population image: 1/"+str(len(self.result))+" Cells: "+str(self.Y[0]))
+                    self.emit(QtCore.SIGNAL("processing()"))
+                    self.processB.setEnabled(False)
+                    
                         
 
 
