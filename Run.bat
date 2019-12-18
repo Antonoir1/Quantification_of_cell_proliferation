@@ -1,1 +1,1 @@
-cmd /c "python Cell_Counter.py"
+cmd /k "env\Scripts\activate && python Cell_Counter.py && env\Scripts\deactivate.bat"
