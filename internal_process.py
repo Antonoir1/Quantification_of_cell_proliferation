@@ -88,15 +88,36 @@ def count2(img):
 
 # call the methode above
 def act(img, index):
-	C=cutter(Image.open(img))
+	#8-bits grayscale
+	if(Image.open(img).mode == "L"):
+		img = Image.open(img)
+	#8-bits color
+	elif(Image.open(img).mode == "RGB"):
+		img = Image.open(img).convert("RGB")
+	#32-bit float
+	elif(Image.open(img).mode == "F"):
+		arr = np.array(Image.open(img))
+		arr = arr*255
+		arr = arr.astype(np.uint8)
+		img = Image.fromarray(arr)
+	#16-bit signed int
+	elif(Image.open(img).mode == "I"):
+		arr = np.array(Image.open(img))
+		addi = 0
+		if(np.amin(arr) < 0):
+			addi = 32768
+		arr = (arr+addi)*(255/65535)
+		arr = arr.astype(np.uint8)
+		img = Image.fromarray(arr)
+
+	C=cutter(img)
 	points=C[0]
 	points=point(points)
 	final=glue(points,C[1],C[2])
 	s=count2(final)
 
-	print(s)
 
-	img_tmp = np.array(Image.open(img).convert("RGB"))
+	img_tmp = np.array(img.convert("RGB"))
 	for i in range(0,img_tmp.shape[0]):
 		for j in range(0,img_tmp.shape[1]):
 			if(final[i,j] >= 0.8):

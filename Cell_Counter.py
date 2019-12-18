@@ -1,11 +1,8 @@
 import sys, os, math
-from PySide2.QtWidgets import QApplication, QMainWindow
-from PySide2 import QtCore, QtGui, QtWidgets
-from PySide2.QtCharts import QtCharts
+from PySide2 import QtCore, QtGui, QtWidgets, QtCharts
+import numpy as np
 
 from internal_process import act
-import numpy as np
-from PIL import Image
 
 #CLASS HANDLING THE PROCESSING THREAD WORKER
 class Woker(QtCore.QObject):
@@ -20,8 +17,8 @@ class Woker(QtCore.QObject):
         #PROCESS THE IMAGES
         work_prog = 0
         for i in range(0,len(self.window.imgs)):
-            CellCount = act(self.window.path+"/"+self.window.imgs[i], i)
             try:
+                CellCount = act(self.window.path+"/"+self.window.imgs[i], i)
                 self.window.result.append("tmp"+str(i)+".tiff")
                 self.window.X.append(i)
                 self.window.Y.append(CellCount)
@@ -197,16 +194,16 @@ class PopulationGraph(QtWidgets.QWidget):
         layout.setSpacing(0)
         layout.setContentsMargins(0,0,0,0)
 
-        self.View = QtCharts.QChartView()
-        self.View.setRubberBand(QtCharts.QChartView.HorizontalRubberBand)
+        self.View = QtCharts.QtCharts.QChartView()
+        self.View.setRubberBand(QtCharts.QtCharts.QChartView.HorizontalRubberBand)
         self.View.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)
-        self.line = QtCharts.QLineSeries()
-        self.zeros = QtCharts.QLineSeries()
-        self.area = QtCharts.QAreaSeries(self.line,self.zeros)
+        self.line = QtCharts.QtCharts.QLineSeries()
+        self.zeros = QtCharts.QtCharts.QLineSeries()
+        self.area = QtCharts.QtCharts.QAreaSeries(self.line,self.zeros)
         self.area.setBrush(QtGui.QBrush(QtCore.Qt.red))
         self.area.setBorderColor(QtCore.Qt.gray)
         self.area.setName("Cells")
-        self.chart = QtCharts.QChart()
+        self.chart = QtCharts.QtCharts.QChart()
         self.chart.setTheme(self.chart.ChartThemeBlueIcy)
         self.chart.addSeries(self.area)
         self.chart.createDefaultAxes()
@@ -362,6 +359,10 @@ class Window(QtWidgets.QWidget):
         opendir.setShortcut("Ctrl+O")
         filemenu.addAction(opendir)
         self.connect(opendir, QtCore.SIGNAL("triggered()"), self, QtCore.SLOT("Open_Dir()"))
+        saving = QtWidgets.QAction("Save",self)
+        saving.setShortcut("Ctrl+S")
+        filemenu.addAction(saving)
+        self.connect(saving, QtCore.SIGNAL("triggered()"), self, QtCore.SLOT("Save()"))
         escape = QtWidgets.QAction("Quit",self)
         escape.setShortcut("Escape")
         filemenu.addAction(escape)
@@ -531,6 +532,11 @@ class Window(QtWidgets.QWidget):
         self.thread.quit()
         self.deleteLater()
         event.accept()
+
+    #SAVE THE X AND Y VALUES IN A CSV FILE
+    def Save(self):
+        arr = np.array([self.X,self.Y])
+        np.savetxt("XY.csv",arr,delimiter=",")
 
     #DELETE THE THREAD BEFORE EXITING
     def Delete(self):
@@ -705,7 +711,7 @@ class Window(QtWidgets.QWidget):
 
 
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     try:
         css = open("./style.txt","r")
         css = css.read()
