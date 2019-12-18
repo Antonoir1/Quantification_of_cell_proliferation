@@ -20,8 +20,8 @@ class Woker(QtCore.QObject):
         #PROCESS THE IMAGES
         work_prog = 0
         for i in range(0,len(self.window.imgs)):
+            CellCount = act(self.window.path+"/"+self.window.imgs[i], i)
             try:
-                CellCount = act(self.window.path+"/"+self.window.imgs[i], i)
                 self.window.result.append("tmp"+str(i)+".tiff")
                 self.window.X.append(i)
                 self.window.Y.append(CellCount)
@@ -210,6 +210,7 @@ class PopulationGraph(QtWidgets.QWidget):
         self.chart.setTheme(self.chart.ChartThemeBlueIcy)
         self.chart.addSeries(self.area)
         self.chart.createDefaultAxes()
+        self.chart.setContentsMargins(30,30,30,30)
         self.View.setChart(self.chart)
 
         layout.addWidget(self.View)
@@ -619,7 +620,10 @@ class Window(QtWidgets.QWidget):
             self.labelimg.setText("Population image: 1/"+str(len(self.result))+" Cells: "+str(self.Y[0]))
             self.processB.setEnabled(True)
         else:
-            print("erreur")
+            msg = QtWidgets.QMessageBox()
+            msg.setWindowTitle("Error")
+            msg.setText( u"ERROR:\nNo images could be processed, please check your files" )
+            msg.exec()
 
         
 
@@ -679,6 +683,9 @@ class Window(QtWidgets.QWidget):
                         while(unordered[i] != ordering[k][0] and k < len(ordering)):
                             k += 1
                         self.imgs.append(ordering[k][1])
+                    
+                    if(os.path.isdir("./tmp") == False):
+                        os.mkdir("tmp")
 
                     for filename in os.listdir("./tmp"):
                         os.remove("./tmp/"+filename)

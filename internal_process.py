@@ -1,12 +1,14 @@
+import os
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
-from PIL import *
-from PIL import Image, ImageOps
-import matplotlib.pyplot as plt
+from PIL import Image
 
-M=tf.keras.models.load_model("./models/Unet_1_16.h5")
-C=tf.keras.models.load_model("./models/compteur2.h5")
+try:
+	M=tf.keras.models.load_model("./models/Unet_1_16.h5")
+	C=tf.keras.models.load_model("./models/compteur2.h5")
+except:
+	pass
 
 #input: a picture
 #return a list of 512*512*1 array croped from the picture X and Y
@@ -89,14 +91,15 @@ def act(img, index):
 	C=cutter(Image.open(img))
 	points=C[0]
 	points=point(points)
-	s=count(points)
 	final=glue(points,C[1],C[2])
-	final = (final*255).astype(np.uint8)
+	s=count2(final)
+
+	print(s)
 
 	img_tmp = np.array(Image.open(img).convert("RGB"))
-	for i in range(0,final.shape[0]):
-		for j in range(0,final.shape[1]):
-			if(final[i,j] >= 204):
+	for i in range(0,img_tmp.shape[0]):
+		for j in range(0,img_tmp.shape[1]):
+			if(final[i,j] >= 0.8):
 				img_tmp[i,j][0] = 255
 				img_tmp[i,j][1] = 0
 				img_tmp[i,j][2] = 0
