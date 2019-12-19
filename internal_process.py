@@ -1,12 +1,11 @@
 import os
 import numpy as np
-import tensorflow as tf
 from tensorflow import keras
 from PIL import Image
 
 try:
-	M=tf.keras.models.load_model("./models/Unet_1_16.h5")
-	C=tf.keras.models.load_model("./models/compteur2.h5")
+	M=keras.models.load_model("./models/Unet_1_16.h5")
+	C=keras.models.load_model("./models/compteur2.h5")
 except:
 	pass
 

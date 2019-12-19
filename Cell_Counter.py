@@ -702,6 +702,7 @@ class Window(QtWidgets.QWidget):
 
                     for filename in os.listdir("./tmp"):
                         os.remove("./tmp/"+filename)
+                        QtCore.QCoreApplication.processEvents()
 
                     self.X = []
                     self.Y = []
