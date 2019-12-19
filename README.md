@@ -84,18 +84,24 @@ deactivate
 
 ### **Step 1: Add the path of your images folder**
 
-Click on the 'Browse' button and select the folder containing your image (Shortcuts: CTRL+O).
+Click on the **Browse** button and select the folder containing your image (Shortcuts: CTRL+O).
 
 ### **Step 2: Add the images prefix**
 
-Type your images's prefix in the prefix input field.
+Type your images's prefix in the **Prefix** input field.
 
 ### **Step 3: Launch the processing of the images**
 
-Click on the 'Process Data' button to process your images.
+Click on the **Process Data** button to process your images.
 
 ### **Step 4: Observe the results**
 
-You can observe on the 'Cell population' graph the evolution of this cell population over time. By hovering your mouse on the graph you will see the points's values, and by selecting a part of the graph with the Left click you can zoom in (Left click to zoom out).
+You can observe on the **Cell population** graph the evolution of this cell population over time. By hovering your mouse on the graph you will see the points's values, and by selecting a part of the graph with the Left click you can zoom in (Left click to zoom out).
 
-You can also observe on the 'Population image' displayer, on each timepoint the number of cells in your population with the buttons on both sides of the image (Shortcuts: CTRL+B = Last image, CTRL+N = Next image).
+You can also observe on the **Population image** displayer, on each timepoint the number of cells in your population with the buttons on both sides of the image (Shortcuts: CTRL+B = Last image, CTRL+N = Next image).
+
+## Additional features:
+
+### **Save your results**
+
+You can save the results of the processed image by clicking on **File > Save** or with CTRL+S, this will create a **XY.csv** file containing the X and Y values. You can also copy the processed images in the [/tmp](https://github.com/Antonoir1/Quantification_of_cell_proliferation/tree/master/tmp) folder.
