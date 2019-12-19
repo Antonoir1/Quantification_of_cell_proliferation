@@ -1,4 +1,4 @@
-# Quantification of cell proliferation (WARNING: WORK IN PROGRESS)
+# Quantification of cell proliferation
 
 ## Description:
 
