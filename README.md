@@ -49,7 +49,7 @@ Type your images's prefix in the prefix input field.
 
 ### Step 3: Launch the processing of the images
 
-Click on the 'Process Data' button to process your images (Shortcut: CTRL+P).
+Click on the 'Process Data' button to process your images.
 
 ### Step 4: Observe the results
 
