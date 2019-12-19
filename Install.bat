@@ -1,1 +1,0 @@
-cmd /c "env\Scripts\activate && pip install -r requirements.txt && env\Scripts\deactivate.bat"
