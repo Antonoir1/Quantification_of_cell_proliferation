@@ -460,6 +460,7 @@ class Window(QtWidgets.QWidget):
         self.Graph.setMinimumHeight(304)
 
         #GLOBAL VARIABLES FOR PROCESSING IMAGES
+        self.has_finished = True
         self.imgs = []
         self.prefix = ""
         self.path = ""
@@ -529,9 +530,12 @@ class Window(QtWidgets.QWidget):
 
     #DETECT CLOSING EVENT
     def closeEvent(self, event):
-        self.thread.quit()
-        self.deleteLater()
-        event.accept()
+        if(self.has_finished == True):
+            self.thread.quit()
+            self.deleteLater()
+            event.accept()
+        else:
+            event.ignore()
 
     #SAVE THE X AND Y VALUES IN A CSV FILE
     def Save(self):
@@ -540,8 +544,9 @@ class Window(QtWidgets.QWidget):
 
     #DELETE THE THREAD BEFORE EXITING
     def Delete(self):
-        self.thread.quit()
-        QtWidgets.qApp.quit()
+        if(self.has_finished == True):
+            self.thread.quit()
+            QtWidgets.qApp.quit()
 
     #SELECT DIRECTORY (SHORTCUT CTRL+O)
     def Open_Dir(self):
@@ -630,6 +635,7 @@ class Window(QtWidgets.QWidget):
             msg.setWindowTitle("Error")
             msg.setText( u"ERROR:\nNo images could be processed, please check your files" )
             msg.exec()
+        self.has_finished = True
 
         
 
@@ -695,7 +701,6 @@ class Window(QtWidgets.QWidget):
 
                     for filename in os.listdir("./tmp"):
                         os.remove("./tmp/"+filename)
-                        QtCore.QCoreApplication.processEvents()
 
                     self.X = []
                     self.Y = []
@@ -703,6 +708,7 @@ class Window(QtWidgets.QWidget):
                     self.path = self.ind.get_path()
                     self.prefix = str(self.inputpref.text())
                     self.labelprogress.setText("in progress...")
+                    self.has_finished = False
                     self.emit(QtCore.SIGNAL("processing()"))
                     self.processB.setEnabled(False)
                     
