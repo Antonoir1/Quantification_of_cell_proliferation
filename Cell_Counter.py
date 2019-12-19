@@ -567,6 +567,7 @@ class Window(QtWidgets.QWidget):
         "<h2>Step 2: Add the images prefix</h2><p>Type your images's prefix in the prefix input field</p>"+
         "<h2>Step 3: Launch the processing of the images</h2><p>Click on the 'Process Data' button to process your images (Shortcut: CTRL+P)</p>"+
         "<h2>Step 4: Observe the results</h2><p>You can observe on the 'Cell population' graph the evolution of this cell population over time. By hovering your mouse on the graph you will see the points's values, and by selecting a part of the graph with the Left click you can zoom in (Left click to zoom out)</p><p>You can also observe on the 'Population image' displayer, on each timepoint the number of cells in your population with the buttons on both sides of the image (Shortcuts: CTRL+B = Last image, CTRL+N = Next image)</p>"+
+        "<h3>Github:</h3><a href=\"https://github.com/Antonoir1/Quantification_of_cell_proliferation\">Quantification_of_cell_proliferation</a>"+
         "</html>")
 
         scroll = QtWidgets.QScrollArea()
