@@ -18,12 +18,12 @@ The goal of this project was to make a tool for the researchers (in the cancer c
 ## Prerequisites
 
 <ul>
-<li>Windows 7/8/10 or Linux or MacOs</li>
+<li>Windows 7/8/10</li>
 </ul>
 
 ## Install
 
-To install this tool extract the folder in [Python-3.7.4x64.exe](https://github.com/Antonoir1/Quantification_of_cell_proliferation/blob/master/Python-3.7.4x64.exe) and rename it **Python-3.7.4x64**, then on **Windows** execute the file [Setup.bat](https://github.com/Antonoir1/Quantification_of_cell_proliferation/blob/master/Setup.bat) and for **Linux/MacOs** run the following commands:
+To install this tool extract the folder in [Python-3.7.4x64.exe](https://github.com/Antonoir1/Quantification_of_cell_proliferation/blob/master/Python-3.7.4x64.exe) and rename it **Python-3.7.4x64**, then execute the file [Setup.bat](https://github.com/Antonoir1/Quantification_of_cell_proliferation/blob/master/Setup.bat) or run the following commands:
 
 ```bash
 source env/Scripts/activate
@@ -35,7 +35,7 @@ source env/Scripts/activate
 
 ## Run
 
-To run this tool on **windows** execute the file [Run.bat](https://github.com/Antonoir1/Quantification_of_cell_proliferation/blob/master/Run.bat) and for **Linux/MacOs** run the following command:
+To run this tool execute the file [Run.bat](https://github.com/Antonoir1/Quantification_of_cell_proliferation/blob/master/Run.bat) or run the following command:
 
 ```bash
 source env/Scripts/activate
