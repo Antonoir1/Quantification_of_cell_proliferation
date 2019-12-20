@@ -13,28 +13,23 @@ The goal of this project was to make a tool for the researchers (in the cancer c
 <li>Tensorflow 2.0.0 (https://www.tensorflow.org)</li>
 </ul>
 
+# Standalone version (Portable)
+
 ## Prerequisites
 
 <ul>
-<li>Windows 7/8/10</li>
-<li>Linux</li>
-<li>Mac</li>
+<li>Windows 7/8/10 or Linux or MacOs</li>
 </ul>
-
-# Standalone version
 
 ## Install
 
-To install this tool extract the folder in [Python-3.7.4x64.exe](https://github.com/Antonoir1/Quantification_of_cell_proliferation/blob/master/Python-3.7.4x64.exe) and rename it **Python-3.7.4x64**, the on **Windows** execute the file [Setup.bat](https://github.com/Antonoir1/Quantification_of_cell_proliferation/blob/master/Setup.bat) and for **Linux/MacOs** run the following commands:
+To install this tool extract the folder in [Python-3.7.4x64.exe](https://github.com/Antonoir1/Quantification_of_cell_proliferation/blob/master/Python-3.7.4x64.exe) and rename it **Python-3.7.4x64**, then on **Windows** execute the file [Setup.bat](https://github.com/Antonoir1/Quantification_of_cell_proliferation/blob/master/Setup.bat) and for **Linux/MacOs** run the following commands:
 
 ```bash
 source env/Scripts/activate
 ```
 ```bash
 ./Python-3.7.4x64/App/Python/python.exe -m pip install -r requirements.txt
-```
-```bash
-exit
 ```
 
 
@@ -48,12 +43,32 @@ source env/Scripts/activate
 ```bash
 ./Python-3.7.4x64/App/Python/python.exe Cell_Counter.py
 ```
+
+# Non-Standalone version (Non-portable)
+
+## Prerequisites
+
+<ul>
+<li>Windows 7/8/10 or Linux or MacOs</li>
+<li>Python 3.5-3.7</li>
+</ul>
+
+
+## Install
+
+To install this tool run this command:
+
 ```bash
-exit
+python -m pip install -r requirements.txt
 ```
 
-# Non-standalone version
+## Run
 
+To run this tool run this command:
+
+```bash
+python Cell_Counter.py
+```
 
 
 
