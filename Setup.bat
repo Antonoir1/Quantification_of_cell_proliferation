@@ -1,1 +1,1 @@
-cmd /c "env\Scripts\activate.bat && env\Scripts\python.exe -m pip install -r requirements.txt && env\Scripts\deactivate.bat"
+cmd /c "env\Scripts\activate && Python-3.7.4x64\App\Python\python.exe -m pip install -r requirements.txt && env\Scripts\deactivate.bat"

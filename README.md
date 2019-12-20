@@ -4,6 +4,15 @@
 
 The goal of this project was to make a tool for the researchers (in the cancer cell proliferation) to use. This tool will count the cell population in a given image (.tif or .tiff), and will even track the cell flows over time, if these images are given with a time order and a prefix (ex: Time => Time0, Time1, Time2...). Warning: the time order must be superior or equal to 0.
 
+## Libraries used
+
+<ul>
+<li>PySide2 5.13.2 (https://wiki.qt.io/Qt_for_Python)</li>
+<li>numpy 1.17.4 (https://pypi.org/project/numpy)</li>
+<li>Pillow 6.2.1 (https://pypi.org/project/Pillow)</li>
+<li>Tensorflow 2.0.0 (https://www.tensorflow.org)</li>
+</ul>
+
 ## Prerequisites
 
 <ul>
@@ -12,66 +21,41 @@ The goal of this project was to make a tool for the researchers (in the cancer c
 <li>Mac</li>
 </ul>
 
-## Prerequisites optional (Run the code directly)
-
-<ul>
-<li>python 3.5-3.7 (https://www.python.org)</li>
-<li>PySide2 5.13.2 (https://wiki.qt.io/Qt_for_Python)</li>
-<li>numpy 1.17.4 (https://pypi.org/project/numpy)</li>
-<li>Pillow 6.2.1 (https://pypi.org/project/Pillow)</li>
-<li>Tensorflow 2.0.0 (https://www.tensorflow.org)</li>
-</ul>
+# Standalone version
 
 ## Install
 
-To install this tool execute the file [Setup.bat](https://github.com/Antonoir1/Quantification_of_cell_proliferation/blob/master/Setup.bat) or run the following commands:
+To install this tool extract the folder in [Python-3.7.4x64.exe](https://github.com/Antonoir1/Quantification_of_cell_proliferation/blob/master/Python-3.7.4x64.exe) and rename it **Python-3.7.4x64**, the on **Windows** execute the file [Setup.bat](https://github.com/Antonoir1/Quantification_of_cell_proliferation/blob/master/Setup.bat) and for **Linux/MacOs** run the following commands:
 
-Windows :
-```bash
-env\Scripts\activate.bat
-```
-```bash
-env\Scripts\python.exe -m pip install -r requirements.txt
-```
-```bash
-env\Scripts\deactivate.bat
-```
-Linux/Macos :
 ```bash
 source env/Scripts/activate
 ```
 ```bash
-env/Scripts/python.exe -m pip install -r requirements.txt
+./Python-3.7.4x64/App/Python/python.exe -m pip install -r requirements.txt
 ```
 ```bash
-deactivate
+exit
 ```
 
 
 ## Run
 
-To run this tool execute the file [Run.bat](https://github.com/Antonoir1/Quantification_of_cell_proliferation/blob/master/Run.bat) or you can enter the following command:
+To run this tool on **windows** execute the file [Run.bat](https://github.com/Antonoir1/Quantification_of_cell_proliferation/blob/master/Run.bat) and for **Linux/MacOs** run the following command:
 
-Windows :
-```bash
-env\Scripts\activate.bat
-```
-```bash
-env\Scripts\python.exe Cell_Counter.py
-```
-```bash
-env\Scripts\deactivate.bat
-```
-Linux/Macos :
 ```bash
 source env/Scripts/activate
 ```
 ```bash
-env/Scripts/python.exe Cell_Counter.py
+./Python-3.7.4x64/App/Python/python.exe Cell_Counter.py
 ```
 ```bash
-deactivate
+exit
 ```
+
+# Non-standalone version
+
+
+
 
 ## **Manual**
 
