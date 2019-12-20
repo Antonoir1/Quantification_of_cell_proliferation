@@ -87,7 +87,7 @@ Click on the **Browse** button and select the folder containing your image (Shor
 
 ### **Step 2: Add the images prefix**
 
-Type your images's prefix in the **Prefix** input field.
+Type your images's prefix in the **Images Prefix** input field.
 
 ### **Step 3: Launch the processing of the images**
 
